@@ -1,6 +1,6 @@
-package com.github.artemkorsakov.objects
+package com.github.artemkorsakov.matrix
 
-import com.github.artemkorsakov.objects.GenericOperation._
+import com.github.artemkorsakov.matrix.GenericOperation._
 
 case class MatrixLine[T](x: Seq[T]) {
   def *(y: Seq[T]): Option[T] = mul(y)

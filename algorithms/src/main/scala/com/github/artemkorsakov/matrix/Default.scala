@@ -1,4 +1,4 @@
-package com.github.artemkorsakov.objects
+package com.github.artemkorsakov.matrix
 
 import scala.collection.immutable
 

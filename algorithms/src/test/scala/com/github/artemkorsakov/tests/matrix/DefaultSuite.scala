@@ -1,7 +1,7 @@
-package com.github.artemkorsakov.tests.objects
+package com.github.artemkorsakov.tests.matrix
 
-import com.github.artemkorsakov.objects.Default
-import com.github.artemkorsakov.objects.Default._
+import com.github.artemkorsakov.matrix.Default
+import com.github.artemkorsakov.matrix.Default._
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers._
 

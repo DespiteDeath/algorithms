@@ -1,9 +1,9 @@
-package com.github.artemkorsakov.objects
+package com.github.artemkorsakov.matrix
 
 import cats.implicits._
-import com.github.artemkorsakov.objects.GenericOperation._
-import com.github.artemkorsakov.objects.Matrix._
-import com.github.artemkorsakov.objects.MatrixLine._
+import com.github.artemkorsakov.matrix.GenericOperation._
+import com.github.artemkorsakov.matrix.Matrix.seq2Matrix
+import com.github.artemkorsakov.matrix.MatrixLine.seq2MatrixLine
 
 /** Matrix.
   *

@@ -1,4 +1,4 @@
-package com.github.artemkorsakov.objects
+package com.github.artemkorsakov.matrix
 
 object GenericOperation {
   def zeroT[T](t1: T): T = t1 match {

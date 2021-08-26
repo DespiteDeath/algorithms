@@ -19,6 +19,15 @@ object GenericOperation {
     case _             => Default.value[T]
   }
 
+  def minusOneT[T](t1: T): T = t1 match {
+    case _: Int        => (-1).asInstanceOf[T]
+    case _: Long       => (-1L).asInstanceOf[T]
+    case _: Double     => (-1.0).asInstanceOf[T]
+    case _: BigInt     => BigInt(-1).asInstanceOf[T]
+    case _: BigDecimal => BigDecimal(-1.0).asInstanceOf[T]
+    case _             => Default.value[T]
+  }
+
   def addT[T](t1: T, t2: T): T = (t1, t2) match {
     case (v1: Int, v2: Int)               => (v1 + v2).asInstanceOf[T]
     case (v1: Long, v2: Long)             => (v1 + v2).asInstanceOf[T]

@@ -7,6 +7,7 @@ import com.github.artemkorsakov.matrix.MatrixLine.seq2MatrixLine
 /** Matrix m * n.
   *
   * @see <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">detailed description</a>
+  * @see <a href="http://vmath.ru/vf5/algebra2">detailed description</a>
   */
 case class Matrix[T](elements: Seq[Seq[T]]) {
 
@@ -21,6 +22,8 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
   def row(i: Int): Seq[T] = elements(i)
 
   def column(j: Int): Seq[T] = (0 until m).map(i => elements(i)(j))
+
+  lazy val mainDiagonal: Seq[T] = (0 until math.min(n, m)).map(i => elements(i)(i))
 
   /** <a href="https://en.wikipedia.org/wiki/Transpose">Transpose</a> of a matrix. */
   def transpose: Matrix[T] =
@@ -46,6 +49,12 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
     }
 
   def isTheSameSize(other: Matrix[T]): Boolean = m == other.m && n == other.n
+
+  val isSquared: Boolean = m == n
+
+  lazy val isSymmetrical: Boolean = isSquared && this == transpose
+
+  lazy val isSkewSymmetrical: Boolean = isSquared && (this == transpose * minusOneT(elements.head.head))
 
   def +(other: Matrix[T]): Matrix[T] = {
     require(isTheSameSize(other))
@@ -114,6 +123,16 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
     }
   }
 
+  // http://vmath.ru/vf5/algebra2#konkatenacija
+  def concatenation(other: Matrix[T]): Matrix[T] = {
+    require(m == other.m)
+    Matrix((0 until m).map(i => elements(i) ++ other.elements(i)))
+  }
+
+  // https://vmath.ru/vf5/algebra2#vektorizacija
+  def vectorization: Seq[T] =
+    (0 until n).foldLeft(Seq.empty[T])((seq, i) => seq ++ column(i))
+
   override def toString: String =
     elements.map(row => row.mkString("| ", ", ", " |")).mkString("\n")
 }
@@ -124,4 +143,7 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
   */
 object Matrix {
   implicit def seq2Matrix[T](elements: Seq[Seq[T]]): Matrix[T] = new Matrix[T](elements)
+
+  def identityMatrix(n: Int): Matrix[Int] =
+    new Matrix[Int]((0 until n).map(i => (0 until n).map(j => if (i == j) 1 else 0)))
 }

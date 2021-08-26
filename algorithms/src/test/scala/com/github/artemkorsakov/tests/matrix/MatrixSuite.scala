@@ -6,6 +6,12 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers._
 
 class MatrixSuite extends AnyFunSuiteLike {
+  test("mainDiagonal") {
+    Matrix(Seq(Seq(1, 2))).mainDiagonal shouldBe Seq(1)
+    Matrix(Seq(Seq(1, 2), Seq(3, 4))).mainDiagonal shouldBe Seq(1, 4)
+    Matrix(Seq(Seq(1, 2), Seq(3, 4), Seq(3, 4))).mainDiagonal shouldBe Seq(1, 4)
+  }
+
   test("matrixTranspose") {
     val matrix1 = Seq(Seq(1, 2))
     val matrix2 = Seq(Seq(1), Seq(2))
@@ -99,6 +105,24 @@ class MatrixSuite extends AnyFunSuiteLike {
     matrix.map(_.map(BigInt(_))).determinant shouldBe BigInt(-8)
   }
 
+  test("isSquared") {
+    Matrix(Seq(Seq(2, 0), Seq(-1, 3), Seq(7, 5))).isSquared shouldBe false
+    Matrix(Seq(Seq(2, 0), Seq(-1, 3))).isSquared shouldBe true
+  }
+
+  test("isSymmetrical") {
+    Matrix(Seq(Seq(2, 0), Seq(-1, 3), Seq(7, 5))).isSymmetrical shouldBe false
+    Matrix(Seq(Seq(2, 0), Seq(-1, 3))).isSymmetrical shouldBe false
+    Matrix(Seq(Seq(2, 0), Seq(0, 3))).isSymmetrical shouldBe true
+  }
+
+  test("isSkewSymmetrical") {
+    Matrix(Seq(Seq(2, 0), Seq(-1, 3), Seq(7, 5))).isSkewSymmetrical shouldBe false
+    Matrix(Seq(Seq(2, 0), Seq(-1, 3))).isSkewSymmetrical shouldBe false
+    Matrix(Seq(Seq(2, 0), Seq(0, 3))).isSkewSymmetrical shouldBe false
+    Matrix(Seq(Seq(0, 1), Seq(-1, 0))).isSkewSymmetrical shouldBe true
+  }
+
   test("add") {
     val matrixA = Seq(Seq(-2, -1, -1, -4), Seq(-1, -2, -1, -6), Seq(-1, -1, 2, 4), Seq(2, 1, -3, -8))
     val matrixB = Seq(Seq(8, -5, -6, -4), Seq(-13, -22, -11, -65), Seq(45, 45, 34, 35), Seq(23, 12, -33, -82))
@@ -125,6 +149,11 @@ class MatrixSuite extends AnyFunSuiteLike {
     val matrixC = Seq(Seq(8, 25, 27), Seq(23, -1, -1), Seq(13, 18, 14))
     matrixA * matrixB shouldBe Matrix(matrixC)
     matrixA.*(matrixB, 7) shouldBe Matrix(Seq(Seq(1, 4, 6), Seq(2, 6, 6), Seq(6, 4, 0)))
+
+    val matrixD = Matrix(Seq(Seq(3, -1, -1), Seq(2, 0, 1), Seq(1, 1, 1)))
+    val matrixE = Matrix(Seq(Seq(2, 1), Seq(-1, 0), Seq(0, 1)))
+    val matrixH = Matrix(Seq(Seq(7, 2), Seq(4, 3), Seq(1, 2)))
+    matrixD * matrixE shouldBe matrixH
   }
 
   test("matrix multiplication by row") {
@@ -145,5 +174,22 @@ class MatrixSuite extends AnyFunSuiteLike {
     )
 
     fibonacciMatrix.power(50, 1000000) shouldBe Matrix(Seq(Seq(11074, 269025), Seq(269025, 742049)))
+  }
+
+  test("concatenation") {
+    val matrix1 = Matrix(Seq(Seq(2, 0), Seq(-1, 3), Seq(7, 5)))
+    val matrix2 = Matrix(Seq(Seq(1, 2, 3, 4), Seq(5, 6, 7, 8), Seq(3, 4, 2, 6)))
+    val matrix3 = Matrix(Seq(Seq(2, 0, 1, 2, 3, 4), Seq(-1, 3, 5, 6, 7, 8), Seq(7, 5, 3, 4, 2, 6)))
+    matrix1.concatenation(matrix2) shouldBe matrix3
+  }
+
+  test("vectorization") {
+    val matrix1 = Matrix(Seq(Seq(2, 0), Seq(-1, 3), Seq(7, 5)))
+    matrix1.vectorization shouldBe Seq(2, -1, 7, 0, 3, 5)
+  }
+
+  test("identityMatrix") {
+    Matrix.identityMatrix(2) shouldBe Matrix(Seq(Seq(1, 0), Seq(0, 1)))
+    Matrix.identityMatrix(3) shouldBe Matrix(Seq(Seq(1, 0, 0), Seq(0, 1, 0), Seq(0, 0, 1)))
   }
 }

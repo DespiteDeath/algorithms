@@ -1,146 +1,121 @@
 package com.github.artemkorsakov.matrix
 
-import cats.implicits._
 import com.github.artemkorsakov.matrix.GenericOperation._
 import com.github.artemkorsakov.matrix.Matrix.seq2Matrix
 import com.github.artemkorsakov.matrix.MatrixLine.seq2MatrixLine
 
-/** Matrix.
+/** Matrix m * n.
   *
   * @see <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">detailed description</a>
   */
-case class Matrix[T](a: Seq[Seq[T]]) {
+case class Matrix[T](elements: Seq[Seq[T]]) {
+
+  /** Row's count. */
+  val m: Int = elements.length
+  require(m > 0)
+
+  /** Column's count. */
+  val n: Int = elements.head.length
+  require((0 until m).forall(i => elements(i).length == n))
+
+  def row(i: Int): Seq[T] = elements(i)
+
+  def column(j: Int): Seq[T] = (0 until m).map(i => elements(i)(j))
 
   /** <a href="https://en.wikipedia.org/wiki/Transpose">Transpose</a> of a matrix. */
-  def matrixTranspose: Seq[Seq[T]] =
-    a.head.indices.map(i => a.indices.map(j => a(j)(i)))
+  def transpose: Matrix[T] =
+    Matrix((0 until n).map(j => (0 until m).map(i => elements(i)(j))))
 
   /** New matrix without the given row and the given column. */
-  def minorMatrix(row: Int, column: Int): Option[Seq[Seq[T]]] =
-    if (
-      a.isEmpty || a
-        .exists(i => i.length != a.length) || row < 0 || row >= a.length || column < 0 || column >= a.head.length
-    ) {
-      None
-    } else {
-      Some(a.indices.withFilter(_ != row).map(i => a.head.indices.withFilter(_ != column).map(j => a(i)(j))))
-    }
+  def minor(row: Int, column: Int): Matrix[T] =
+    Matrix(
+      (0 until m)
+        .withFilter(_ != row)
+        .map(i => (0 until n).withFilter(_ != column).map(j => elements(i)(j)))
+    )
 
   /** <a href="https://en.wikipedia.org/wiki/Determinant">Determinant</a> of a matrix. */
-  def matrixDeterminant: Option[T] =
-    if (a.isEmpty || a.exists(i => i.length != a.length)) {
-      None
-    } else if (a.length == 1) {
-      Some(a.head.head)
+  def determinant: T =
+    if (elements.length == 1) {
+      elements.head.head
     } else {
-      Some(a.head.indices.foldLeft(zeroT(a.head.head)) { (sum, i) =>
-        val mul = mulT(a.head(i), a.minorMatrix(0, i).get.matrixDeterminant.get)
+      (0 until n).foldLeft(zeroT(elements.head.head)) { (sum, i) =>
+        val mul = mulT(elements.head(i), elements.minor(0, i).determinant)
         if (i % 2 == 0) addT(sum, mul) else subT(sum, mul)
-      })
+      }
     }
 
-  def +(b: Seq[Seq[T]]): Option[Seq[Seq[T]]] = add(b)
+  def isTheSameSize(other: Matrix[T]): Boolean = m == other.m && n == other.n
 
-  def add(b: Seq[Seq[T]]): Option[Seq[Seq[T]]] =
-    if (a.length != b.length || a.indices.exists(i => a(i).length != b(i).length)) None
-    else Some(a.indices.map(i => a(i).indices.map(j => addT(a(i)(j), b(i)(j)))))
+  def +(other: Matrix[T]): Matrix[T] = {
+    require(isTheSameSize(other))
+    Matrix((0 until m).map(i => (0 until n).map(j => addT(elements(i)(j), other.elements(i)(j)))))
+  }
 
-  def *(b: T): Seq[Seq[T]] = mul(b)
+  def *(c: T): Matrix[T] =
+    Matrix((0 until m).map(i => (0 until n).map(j => mulT(elements(i)(j), c))))
 
-  def mul(b: T): Seq[Seq[T]] =
-    a.indices.map(i => a(i).indices.map(j => mulT(a(i)(j), b)))
-
-  def mulMod(b: T, module: T): Seq[Seq[T]] =
-    a.indices.map(i => a(i).indices.map(j => modT(mulT(a(i)(j), b), module)))
-
-  def *(b: Seq[Seq[T]]): Option[Seq[Seq[T]]] = mul(b)
+  def *(c: T, module: T): Matrix[T] =
+    Matrix((0 until m).map(i => (0 until n).map(j => modT(mulT(elements(i)(j), c), module))))
 
   /** <a href="https://en.wikipedia.org/wiki/Matrix_multiplication">multiplication</a> */
-  def mul(b: Seq[Seq[T]]): Option[Seq[Seq[T]]] =
-    if (
-      a.isEmpty || b.isEmpty || a
-        .exists(_.length != a.head.length) || b.exists(_.length != b.head.length) || a.head.length != b.length
-    ) {
-      None
-    } else {
-      a.indices
-        .map(i => b.head.indices.map(j => a(i).mul(b.indices.map(k => b(k)(j)))).toList.traverse(identity))
-        .toList
-        .traverse(identity)
-    }
+  def *(other: Matrix[T]): Matrix[T] = {
+    require(n == other.m)
+    val newElements = (0 until m)
+      .map(i => (0 until other.n).map(j => elements(i).*((0 until n).map(k => other.elements(k)(j)))))
+    Matrix(newElements)
+  }
 
-  /** <a href="https://en.wikipedia.org/wiki/Matrix_multiplication">multiplication</a> */
-  def mulMod(b: Seq[Seq[T]], module: T): Option[Seq[Seq[T]]] =
-    if (
-      a.isEmpty || b.isEmpty || a
-        .exists(_.length != a.head.length) || b.exists(_.length != b.head.length) || a.head.length != b.length
-    ) {
-      None
-    } else {
-      a.indices
-        .map(i => b.head.indices.map(j => a(i).mulMod(b.indices.map(k => b(k)(j)), module)).toList.traverse(identity))
-        .toList
-        .traverse(identity)
-    }
+  def *(other: Matrix[T], module: T): Matrix[T] = {
+    require(n == other.m)
+    val newElements = (0 until m)
+      .map(i => (0 until other.n).map(j => elements(i).*((0 until n).map(k => other.elements(k)(j)), module)))
+    Matrix(newElements)
+  }
 
-  def *(b: MatrixLine[T]): Option[Seq[T]] = mul(b)
+  def *(other: MatrixLine[T]): MatrixLine[T] =
+    *(other.columnToMatrix).elements.map(_.head)
 
-  def mul(b: MatrixLine[T]): Option[Seq[T]] =
-    for {
-      seq <- mul(b.x.map(Seq(_)))
-    } yield seq.map(s => s.head)
-
-  def mulMod(b: MatrixLine[T], module: T): Option[Seq[T]] =
-    for {
-      seq <- mulMod(b.x.map(Seq(_)), module)
-    } yield seq.map(s => s.head)
+  def *(other: MatrixLine[T], module: T): MatrixLine[T] =
+    *(other.columnToMatrix, module).elements.map(_.head)
 
   /** Matrix exponentiation. */
-  def power(b: Long): Option[Seq[Seq[T]]] =
-    if (b < 1) {
-      None
-    } else if (b == 1) {
-      Some(a)
+  def power(p: Long): Matrix[T] = {
+    require(p >= 1)
+    if (p == 1) {
+      this
     } else {
-      val powers  = b.toBinaryString
-      val powersC = new Array[Seq[Seq[T]]](powers.length)
-      powersC(0) = a
-      (1 until powers.length).foreach { i =>
-        for {
-          mul <- powersC(i - 1) * powersC(i - 1)
-        } yield powersC(i) = mul
-      }
-      var c = powersC.last
+      val powers  = p.toBinaryString
+      val powersC = new Array[Matrix[T]](powers.length)
+      powersC(0) = this
+      (1 until powers.length).foreach(i => powersC(i) = powersC(i - 1) * powersC(i - 1))
+      var result = powersC.last
       (1 until powers.length).withFilter(powers(_) == '1').foreach { i =>
-        for {
-          mul <- c * powersC(powersC.length - 1 - i)
-        } yield c = mul
+        result = result * powersC(powersC.length - 1 - i)
       }
-      Some(c)
+      result
     }
+  }
 
-  def powerMod(b: Long, module: T): Option[Seq[Seq[T]]] =
-    if (b < 1) {
-      None
-    } else if (b == 1) {
-      Some(a.map(_.map(modT(_, module))))
+  def power(p: Long, module: T): Matrix[T] = {
+    require(p >= 1)
+    if (p == 1) {
+      Matrix(elements.map(_.map(modT(_, module))))
     } else {
-      val powers  = b.toBinaryString
-      val powersC = new Array[Seq[Seq[T]]](powers.length)
-      powersC(0) = a
-      (1 until powers.length).foreach { i =>
-        for {
-          mul <- powersC(i - 1).mulMod(powersC(i - 1), module)
-        } yield powersC(i) = mul
-      }
-      var c = powersC.last
+      val powers  = p.toBinaryString
+      val powersC = new Array[Matrix[T]](powers.length)
+      powersC(0) = this
+      (1 until powers.length).foreach(i => powersC(i) = powersC(i - 1) * (powersC(i - 1), module))
+      var result = powersC.last
       (1 until powers.length).withFilter(powers(_) == '1').foreach { i =>
-        for {
-          mul <- c.mulMod(powersC(powersC.length - 1 - i), module)
-        } yield c = mul
+        result = result * (powersC(powersC.length - 1 - i), module)
       }
-      Some(c)
+      result
     }
+  }
+
+  override def toString: String =
+    elements.map(row => row.mkString("| ", ", ", " |")).mkString("\n")
 }
 
 /** Matrix.
@@ -148,5 +123,5 @@ case class Matrix[T](a: Seq[Seq[T]]) {
   * @see <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">detailed description</a>
   */
 object Matrix {
-  implicit def seq2Matrix[T](a: Seq[Seq[T]]): Matrix[T] = new Matrix[T](a)
+  implicit def seq2Matrix[T](elements: Seq[Seq[T]]): Matrix[T] = new Matrix[T](elements)
 }

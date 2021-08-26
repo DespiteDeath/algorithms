@@ -1,6 +1,7 @@
 package com.github.artemkorsakov.numbers
 
-import com.github.artemkorsakov.objects.Matrix._
+import com.github.artemkorsakov.matrix.Matrix
+import com.github.artemkorsakov.matrix.Matrix._
 
 /** <a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci number</a> */
 object Fibonacci {
@@ -13,11 +14,11 @@ object Fibonacci {
   def approximateFibonacci(n: Long): BigInt =
     (PHI.pow(n.toInt) / BigDecimal(math.sqrt(5))).setScale(0, BigDecimal.RoundingMode.HALF_UP).toBigInt
 
-  def fibonacci(n: Int): Option[BigInt] = fibonacci(n.toLong)
+  def fibonacci(n: Int): BigInt = fibonacci(n.toLong)
 
-  def fibonacci(n: Long): Option[BigInt] = fibonacciMatrix(n).map(_.last.head)
+  def fibonacci(n: Long): BigInt = fibonacciMatrix(n).row(0).last
 
-  def fibonacciMatrix(n: Long): Option[Seq[Seq[BigInt]]] = fibonacci_matrix.power(n)
+  def fibonacciMatrix(n: Long): Matrix[BigInt] = fibonacci_matrix.power(n)
 
-  def fibonacciMatrix(n: Long, module: BigInt): Option[Seq[Seq[BigInt]]] = fibonacci_matrix.powerMod(n, module)
+  def fibonacciMatrix(n: Long, module: BigInt): Matrix[BigInt] = fibonacci_matrix.power(n, module)
 }

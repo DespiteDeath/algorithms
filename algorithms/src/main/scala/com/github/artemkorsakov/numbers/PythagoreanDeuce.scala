@@ -1,6 +1,6 @@
 package com.github.artemkorsakov.numbers
 
-import com.github.artemkorsakov.objects.Matrix._
+import com.github.artemkorsakov.matrix.Matrix._
 
 /** A Pythagorean triplet is a set of three natural numbers, a &lt; b &lt; c,
   * for which, a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup>,
@@ -22,9 +22,11 @@ case class PythagoreanDeuce(m: Long, n: Long) {
 
   /** <a href="https://en.wikipedia.org/wiki/Tree_of_primitive_Pythagorean_triples">Tree of primitive Pythagorean triples</a> */
   def nextPythagoreanDeuce: Seq[PythagoreanDeuce] =
-    matrices.flatMap(mat =>
-      mat.mul(columnVector: Seq[Seq[Long]]).map(seq => PythagoreanDeuce(seq.head.head, seq.last.head))
-    )
+    matrices.map { mat =>
+      val seq = mat.*(columnVector).elements
+      PythagoreanDeuce(seq.head.head, seq.last.head)
+    }
+
 }
 
 object PythagoreanDeuce {

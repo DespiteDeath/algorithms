@@ -1,7 +1,7 @@
 package com.github.artemkorsakov.numbers
 
 import com.github.artemkorsakov.divisors.Divisors.gcd
-import com.github.artemkorsakov.objects.Matrix._
+import com.github.artemkorsakov.matrix.Matrix._
 
 import scala.collection.mutable
 
@@ -17,9 +17,10 @@ case class PythagoreanTriplet(a: Long, b: Long, c: Long) {
 
   /** <a href="https://en.wikipedia.org/wiki/Tree_of_primitive_Pythagorean_triples">Tree of primitive Pythagorean triples</a> */
   def nextPythagoreanTriplet: Seq[PythagoreanTriplet] =
-    matrices.flatMap(mat =>
-      mat.mul(columnVector: Seq[Seq[Long]]).map(seq => PythagoreanTriplet(seq.head.head, seq(1).head, seq.last.head))
-    )
+    matrices.map { mat =>
+      val seq = mat.*(columnVector).elements
+      PythagoreanTriplet(seq.head.head, seq(1).head, seq.last.head)
+    }
 }
 
 object PythagoreanTriplet {

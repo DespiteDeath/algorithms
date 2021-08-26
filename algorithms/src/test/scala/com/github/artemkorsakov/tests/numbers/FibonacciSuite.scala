@@ -1,5 +1,6 @@
 package com.github.artemkorsakov.tests.numbers
 
+import com.github.artemkorsakov.matrix.Matrix
 import com.github.artemkorsakov.numbers.Fibonacci._
 import org.scalatest.Inspectors.forAll
 import org.scalatest.funsuite.AnyFunSuiteLike
@@ -32,18 +33,18 @@ class FibonacciSuite extends AnyFunSuiteLike {
   }
 
   test("fibonacci") {
-    forAll(1 to 21)(i => fibonacci(i).contains(approximateFibonacci(i)))
+    forAll(1 to 21)(i => fibonacci(i) == approximateFibonacci(i))
   }
 
   test("fibonacciMatrix") {
     val fib19 = approximateFibonacci(19)
     val fib20 = approximateFibonacci(20)
     val fib21 = approximateFibonacci(21)
-    fibonacciMatrix(20) shouldBe Some(Seq(Seq(fib21, fib20), Seq(fib20, fib19)))
+    fibonacciMatrix(20) shouldBe Matrix(Seq(Seq(fib21, fib20), Seq(fib20, fib19)))
   }
 
   test("fibonacciMatrix by module") {
-    fibonacciMatrix(1000000000000000L, 1307674368000L) shouldBe Some(
+    fibonacciMatrix(1000000000000000L, 1307674368000L) shouldBe Matrix(
       Seq(Seq(73179529501L, 36651874875L), Seq(36651874875L, 36527654626L))
     )
   }

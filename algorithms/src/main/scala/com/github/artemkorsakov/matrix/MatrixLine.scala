@@ -2,30 +2,26 @@ package com.github.artemkorsakov.matrix
 
 import com.github.artemkorsakov.matrix.GenericOperation._
 
-case class MatrixLine[T](x: Seq[T]) {
-  def *(y: Seq[T]): Option[T] = mul(y)
+case class MatrixLine[T](row: Seq[T]) {
+  def *(col: Seq[T]): T = {
+    require(row.length == col.length)
+    row.indices.foldLeft(zeroT(row.head))((s, i) => addT(s, mulT(row(i), col(i))))
+  }
 
-  def mul(y: Seq[T]): Option[T] =
-    if (x.length != y.length) None
-    else Some(x.indices.foldLeft(zeroT(x.head))((s, i) => addT(s, mulT(x(i), y(i)))))
+  def *(col: Seq[T], module: T): T = {
+    require(row.length == col.length)
+    row.indices.foldLeft(zeroT(row.head))((s, i) => modT(addT(s, mulT(row(i), col(i))), module))
+  }
 
-  def mulMod(y: Seq[T], module: T): Option[T] =
-    if (x.length != y.length) None
-    else Some(x.indices.foldLeft(zeroT(x.head))((s, i) => modT(addT(s, mulT(x(i), y(i))), module)))
+  def *(matrix: Matrix[T]): Seq[T] =
+    rowToMatrix.*(matrix.elements).elements.head
 
-  def toMatrix: Matrix[T] = new Matrix[T](Seq(x))
+  def *(matrix: Matrix[T], module: T): Seq[T] =
+    rowToMatrix.*(matrix.elements, module).elements.head
 
-  def *(b: Matrix[T]): Option[Seq[T]] = mul(b)
+  def rowToMatrix: Matrix[T] = new Matrix[T](Seq(row))
 
-  def mul(b: Matrix[T]): Option[Seq[T]] =
-    for {
-      seq <- toMatrix.mul(b.a)
-    } yield seq.head
-
-  def mulMod(b: Matrix[T], module: T): Option[Seq[T]] =
-    for {
-      seq <- toMatrix.mulMod(b.a, module)
-    } yield seq.head
+  def columnToMatrix: Matrix[T] = new Matrix[T](row.map(Seq(_)))
 }
 
 object MatrixLine {

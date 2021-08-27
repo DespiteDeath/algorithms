@@ -39,17 +39,6 @@ class Matrix[T](val elements: Seq[Seq[T]]) {
         .map(i => (0 until n).withFilter(_ != column).map(j => elements(i)(j)))
     )
 
-  /** <a href="https://en.wikipedia.org/wiki/Determinant">Determinant</a> of a matrix. */
-  def determinant: T =
-    if (elements.length == 1) {
-      topLeft
-    } else {
-      (0 until n).foldLeft(zeroT(topLeft)) { (sum, i) =>
-        val mul = mulT(elements.head(i), Matrix(elements).minor(0, i).determinant)
-        if (i % 2 == 0) addT(sum, mul) else subT(sum, mul)
-      }
-    }
-
   def isTheSameSize(other: Matrix[T]): Boolean = m == other.m && n == other.n
 
   def +(other: Matrix[T]): Matrix[T] = {

@@ -58,6 +58,13 @@ class SquaredMatrixSuite extends AnyFunSuiteLike {
     ).isOrthogonalMatrix shouldBe true
   }
 
+  test("matrixDeterminant") {
+    SquaredMatrix(Seq(Seq(-2, -1), Seq(-1, -2))).determinant shouldBe 3
+    val matrix = SquaredMatrix(Seq(Seq(-2, -1, -1, -4), Seq(-1, -2, -1, -6), Seq(-1, -1, 2, 4), Seq(2, 1, -3, -8)))
+    matrix.determinant shouldBe -8
+    matrix.trace shouldBe -10
+  }
+
   test("identityMatrix") {
     SquaredMatrix.identityMatrix(2) shouldBe SquaredMatrix(Seq(Seq(1, 0), Seq(0, 1)))
     SquaredMatrix.identityMatrix(3) shouldBe SquaredMatrix(Seq(Seq(1, 0, 0), Seq(0, 1, 0), Seq(0, 0, 1)))

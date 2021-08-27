@@ -102,15 +102,6 @@ class MatrixSuite extends AnyFunSuiteLike {
     )
   }
 
-  test("matrixDeterminant") {
-    Matrix(Seq(Seq(-2, -1), Seq(-1, -2))).determinant shouldBe 3
-    val matrix = Matrix(Seq(Seq(-2, -1, -1, -4), Seq(-1, -2, -1, -6), Seq(-1, -1, 2, 4), Seq(2, 1, -3, -8)))
-    matrix.determinant shouldBe -8
-    Matrix(matrix.elements.map(_.map(_.toLong))).determinant shouldBe -8L
-    Matrix(matrix.elements.map(_.map(_.toDouble))).determinant shouldBe -8.0
-    Matrix(matrix.elements.map(_.map(BigInt(_)))).determinant shouldBe BigInt(-8)
-  }
-
   test("add") {
     val matrixA = Matrix(Seq(Seq(-2, -1, -1, -4), Seq(-1, -2, -1, -6), Seq(-1, -1, 2, 4), Seq(2, 1, -3, -8)))
     val matrixB = Matrix(Seq(Seq(8, -5, -6, -4), Seq(-13, -22, -11, -65), Seq(45, 45, 34, 35), Seq(23, 12, -33, -82)))

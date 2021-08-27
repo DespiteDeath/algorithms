@@ -1,6 +1,6 @@
 package com.github.artemkorsakov.matrix
 
-import com.github.artemkorsakov.matrix.GenericOperation.{ minusOneT, oneT, zeroT }
+import com.github.artemkorsakov.matrix.GenericOperation._
 
 /** Squared matrix m * n. */
 class SquaredMatrix[T](elements: Seq[Seq[T]]) extends Matrix[T](elements) {
@@ -24,6 +24,19 @@ class SquaredMatrix[T](elements: Seq[Seq[T]]) extends Matrix[T](elements) {
 
   lazy val isOrthogonalMatrix: Boolean =
     (this * this.transpose).toSquaredMatrix.isIdentityMatrix
+
+  /** <a href="https://en.wikipedia.org/wiki/Determinant">Determinant</a> of a matrix. */
+  def determinant: T =
+    if (elements.length == 1) {
+      topLeft
+    } else {
+      (0 until n).foldLeft(zeroT(topLeft)) { (sum, i) =>
+        val mul = mulT(elements.head(i), SquaredMatrix(elements).minor(0, i).toSquaredMatrix.determinant)
+        if (i % 2 == 0) addT(sum, mul) else subT(sum, mul)
+      }
+    }
+
+  lazy val trace: T = mainDiagonal.foldLeft(zeroT(topLeft))(addT)
 }
 
 object SquaredMatrix {

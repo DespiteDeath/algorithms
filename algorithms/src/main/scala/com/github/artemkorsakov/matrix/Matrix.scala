@@ -1,15 +1,13 @@
 package com.github.artemkorsakov.matrix
 
 import com.github.artemkorsakov.matrix.GenericOperation._
-import com.github.artemkorsakov.matrix.Matrix.seq2Matrix
-import com.github.artemkorsakov.matrix.MatrixLine.seq2MatrixLine
 
 /** Matrix m * n.
   *
   * @see <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">detailed description</a>
   * @see <a href="http://vmath.ru/vf5/algebra2">detailed description</a>
   */
-case class Matrix[T](elements: Seq[Seq[T]]) {
+class Matrix[T](val elements: Seq[Seq[T]]) {
 
   /** Row's count. */
   val m: Int = elements.length
@@ -24,6 +22,10 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
   def column(j: Int): Seq[T] = (0 until m).map(i => elements(i)(j))
 
   lazy val mainDiagonal: Seq[T] = (0 until math.min(n, m)).map(i => elements(i)(i))
+
+  lazy val isSquared: Boolean = m == n
+
+  lazy val topLeft: T = elements.head.head
 
   /** <a href="https://en.wikipedia.org/wiki/Transpose">Transpose</a> of a matrix. */
   def transpose: Matrix[T] =
@@ -40,21 +42,15 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
   /** <a href="https://en.wikipedia.org/wiki/Determinant">Determinant</a> of a matrix. */
   def determinant: T =
     if (elements.length == 1) {
-      elements.head.head
+      topLeft
     } else {
-      (0 until n).foldLeft(zeroT(elements.head.head)) { (sum, i) =>
-        val mul = mulT(elements.head(i), elements.minor(0, i).determinant)
+      (0 until n).foldLeft(zeroT(topLeft)) { (sum, i) =>
+        val mul = mulT(elements.head(i), Matrix(elements).minor(0, i).determinant)
         if (i % 2 == 0) addT(sum, mul) else subT(sum, mul)
       }
     }
 
   def isTheSameSize(other: Matrix[T]): Boolean = m == other.m && n == other.n
-
-  val isSquared: Boolean = m == n
-
-  lazy val isSymmetrical: Boolean = isSquared && this == transpose
-
-  lazy val isSkewSymmetrical: Boolean = isSquared && (this == transpose * minusOneT(elements.head.head))
 
   def +(other: Matrix[T]): Matrix[T] = {
     require(isTheSameSize(other))
@@ -71,22 +67,24 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
   def *(other: Matrix[T]): Matrix[T] = {
     require(n == other.m)
     val newElements = (0 until m)
-      .map(i => (0 until other.n).map(j => elements(i).*((0 until n).map(k => other.elements(k)(j)))))
+      .map(i => (0 until other.n).map(j => MatrixLine(elements(i)).*((0 until n).map(k => other.elements(k)(j)))))
     Matrix(newElements)
   }
 
   def *(other: Matrix[T], module: T): Matrix[T] = {
     require(n == other.m)
     val newElements = (0 until m)
-      .map(i => (0 until other.n).map(j => elements(i).*((0 until n).map(k => other.elements(k)(j)), module)))
+      .map(i =>
+        (0 until other.n).map(j => MatrixLine(elements(i)).*((0 until n).map(k => other.elements(k)(j)), module))
+      )
     Matrix(newElements)
   }
 
   def *(other: MatrixLine[T]): MatrixLine[T] =
-    *(other.columnToMatrix).elements.map(_.head)
+    MatrixLine(*(other.columnToMatrix).elements.map(_.head))
 
   def *(other: MatrixLine[T], module: T): MatrixLine[T] =
-    *(other.columnToMatrix, module).elements.map(_.head)
+    MatrixLine(*(other.columnToMatrix, module).elements.map(_.head))
 
   /** Matrix exponentiation. */
   def power(p: Long): Matrix[T] = {
@@ -133,8 +131,20 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
   def vectorization: Seq[T] =
     (0 until n).foldLeft(Seq.empty[T])((seq, i) => seq ++ column(i))
 
+  lazy val toSquaredMatrix: SquaredMatrix[T] = SquaredMatrix[T](elements)
+
+  lazy val toOrthogonalMatrix: OrthogonalMatrix[T] = OrthogonalMatrix[T](elements)
+
   override def toString: String =
     elements.map(row => row.mkString("| ", ", ", " |")).mkString("\n")
+
+  override def equals(that: Any): Boolean =
+    that match {
+      case that: Matrix[T] => that.elements == this.elements
+      case _               => false
+    }
+
+  override def hashCode: Int = elements.hashCode()
 }
 
 /** Matrix.
@@ -142,8 +152,5 @@ case class Matrix[T](elements: Seq[Seq[T]]) {
   * @see <a href="https://en.wikipedia.org/wiki/Matrix_(mathematics)">detailed description</a>
   */
 object Matrix {
-  implicit def seq2Matrix[T](elements: Seq[Seq[T]]): Matrix[T] = new Matrix[T](elements)
-
-  def identityMatrix(n: Int): Matrix[Int] =
-    new Matrix[Int]((0 until n).map(i => (0 until n).map(j => if (i == j) 1 else 0)))
+  def apply[T](elements: Seq[Seq[T]]): Matrix[T] = new Matrix[T](elements)
 }

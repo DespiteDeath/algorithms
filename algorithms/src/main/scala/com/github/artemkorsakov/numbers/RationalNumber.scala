@@ -47,12 +47,25 @@ case class RationalNumber(x: BigInt, y: BigInt) {
   def div(r: RationalNumber): RationalNumber =
     RationalNumber(numerator * r.denominator, r.numerator * denominator)
 
+  def %(r: RationalNumber): RationalNumber = mod(r)
+
+  def %(r: BigInt): RationalNumber = mod(RationalNumber(r))
+
+  def mod(r: RationalNumber): RationalNumber =
+    RationalNumber((numerator * r.denominator) % (denominator * r.numerator), denominator * r.denominator)
+
   def upend: RationalNumber = RationalNumber(denominator, numerator)
 
   def ==(r: RationalNumber): Boolean = this.equal(r)
 
   def equal(r: RationalNumber): Boolean =
     (numerator * r.denominator).equals(denominator * r.numerator)
+
+  override def equals(obj: Any): Boolean =
+    obj match {
+      case rn: RationalNumber => this.equal(rn)
+      case _                  => false
+    }
 
   def <(r: RationalNumber): Boolean =
     numerator * r.denominator < r.numerator * denominator
@@ -96,6 +109,8 @@ object RationalNumber {
   def apply(r: RationalNumber): RationalNumber = RationalNumber(r.numerator, r.denominator)
 
   val ZeroRationalNumber: RationalNumber = RationalNumber(0, 1)
+
+  val OneRationalNumber: RationalNumber = RationalNumber(1, 1)
 
   def max(r1: RationalNumber, r2: RationalNumber): RationalNumber = if (r1 < r2) r2 else r1
 }

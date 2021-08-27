@@ -14,10 +14,10 @@ case class MatrixLine[T](row: Seq[T]) {
   }
 
   def *(matrix: Matrix[T]): Seq[T] =
-    rowToMatrix.*(matrix.elements).elements.head
+    rowToMatrix.*(matrix).elements.head
 
   def *(matrix: Matrix[T], module: T): Seq[T] =
-    rowToMatrix.*(matrix.elements, module).elements.head
+    rowToMatrix.*(matrix, module).elements.head
 
   def rowToMatrix: Matrix[T] = new Matrix[T](Seq(row))
 
@@ -25,5 +25,5 @@ case class MatrixLine[T](row: Seq[T]) {
 }
 
 object MatrixLine {
-  implicit def seq2MatrixLine[T](x: Seq[T]): MatrixLine[T] = new MatrixLine[T](x)
+  implicit def seq2MatrixLine[T](x: Seq[T]): MatrixLine[T] = MatrixLine[T](x)
 }

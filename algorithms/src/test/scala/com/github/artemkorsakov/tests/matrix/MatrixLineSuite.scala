@@ -1,6 +1,6 @@
 package com.github.artemkorsakov.tests.matrix
 
-import com.github.artemkorsakov.matrix.Matrix._
+import com.github.artemkorsakov.matrix.Matrix
 import com.github.artemkorsakov.matrix.MatrixLine._
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers._
@@ -31,12 +31,12 @@ class MatrixLineSuite extends AnyFunSuiteLike {
   }
 
   test("toMatrix") {
-    Seq(1007, 2456, -3466).rowToMatrix shouldBe seq2Matrix(Seq(Seq(1007, 2456, -3466)))
+    Seq(1007, 2456, -3466).rowToMatrix shouldBe Matrix(Seq(Seq(1007, 2456, -3466)))
   }
 
   test("matrix multiplication by row") {
     val matrixA = Seq(1, -3, 6)
-    val matrixB = Seq(Seq(3, 4, 2, 5), Seq(0, -1, 3, 2), Seq(1, 2, 3, 0))
+    val matrixB = Matrix(Seq(Seq(3, 4, 2, 5), Seq(0, -1, 3, 2), Seq(1, 2, 3, 0)))
     val matrixC = Seq(9, 19, 11, -1)
     matrixA.*(matrixB) shouldBe matrixC
     matrixA * matrixB shouldBe matrixC

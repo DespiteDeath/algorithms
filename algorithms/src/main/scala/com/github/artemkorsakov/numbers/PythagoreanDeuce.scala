@@ -1,6 +1,6 @@
 package com.github.artemkorsakov.numbers
 
-import com.github.artemkorsakov.matrix.Matrix._
+import com.github.artemkorsakov.matrix.Matrix
 
 /** A Pythagorean triplet is a set of three natural numbers, a &lt; b &lt; c,
   * for which, a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup>,
@@ -10,15 +10,15 @@ import com.github.artemkorsakov.matrix.Matrix._
   * (m,n) - Pythagorean deuce.
   */
 case class PythagoreanDeuce(m: Long, n: Long) {
-  val a: Long                          = m * m - n * n
-  val b: Long                          = 2 * m * n
-  val c: Long                          = m * m + n * n
-  val triplet: PythagoreanTriplet      = PythagoreanTriplet(a, b, c)
-  val columnVector                     = Seq(Seq(m), Seq(n))
-  private val a_matrix: Seq[Seq[Long]] = Seq(Seq(2, -1), Seq(1, 0))
-  private val b_matrix: Seq[Seq[Long]] = Seq(Seq(2, 1), Seq(1, 0))
-  private val c_matrix: Seq[Seq[Long]] = Seq(Seq(1, 2), Seq(0, 1))
-  private val matrices                 = Seq(a_matrix, b_matrix, c_matrix)
+  val a: Long                        = m * m - n * n
+  val b: Long                        = 2 * m * n
+  val c: Long                        = m * m + n * n
+  val triplet: PythagoreanTriplet    = PythagoreanTriplet(a, b, c)
+  val columnVector: Matrix[Long]     = Matrix(Seq(Seq(m), Seq(n)))
+  private val a_matrix: Matrix[Long] = Matrix(Seq(Seq(2, -1), Seq(1, 0)))
+  private val b_matrix: Matrix[Long] = Matrix(Seq(Seq(2, 1), Seq(1, 0)))
+  private val c_matrix: Matrix[Long] = Matrix(Seq(Seq(1, 2), Seq(0, 1)))
+  private val matrices               = Seq(a_matrix, b_matrix, c_matrix)
 
   /** <a href="https://en.wikipedia.org/wiki/Tree_of_primitive_Pythagorean_triples">Tree of primitive Pythagorean triples</a> */
   def nextPythagoreanDeuce: Seq[PythagoreanDeuce] =

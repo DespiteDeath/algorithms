@@ -25,6 +25,7 @@ class RationalNumberSuite extends AnyFunSuiteLike {
     (x / y) shouldBe RationalNumber(7, 15)
     (x / 2) shouldBe RationalNumber(1, 6)
     (2 / x) shouldBe RationalNumber(6)
+    (x % y) shouldBe RationalNumber(1, 3)
     x.upend shouldBe RationalNumber(3, 1)
     y.upend shouldBe RationalNumber(7, 5)
   }

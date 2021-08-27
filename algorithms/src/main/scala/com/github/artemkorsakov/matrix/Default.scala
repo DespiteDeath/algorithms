@@ -1,5 +1,8 @@
 package com.github.artemkorsakov.matrix
 
+import com.github.artemkorsakov.numbers.RationalNumber
+import com.github.artemkorsakov.numbers.RationalNumber.ZeroRationalNumber
+
 import scala.collection.immutable
 
 class Default[+A](val default: A)
@@ -21,6 +24,7 @@ object Default extends LowerPriorityImplicits {
   implicit object DefaultUnit       extends Default[Unit](())
   implicit object DefaultBigInt     extends Default[BigInt](BigInt(0))
   implicit object DefaultBigDecimal extends Default[BigDecimal](BigDecimal(0.0))
+  implicit object RationalNumber    extends Default[RationalNumber](ZeroRationalNumber)
 
   implicit def defaultSeq[A]: Default[immutable.Seq[A]] = new Default[immutable.Seq[A]](immutable.Seq())
   implicit def defaultSet[A]: Default[Set[A]]           = new Default[Set[A]](Set())

@@ -1,12 +1,11 @@
 package com.github.artemkorsakov.numbers
 
 import com.github.artemkorsakov.matrix.Matrix
-import com.github.artemkorsakov.matrix.Matrix._
 
 /** <a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci number</a> */
 object Fibonacci {
-  private val PHI: BigDecimal                    = BigDecimal((1.0 + math.sqrt(5.0)) / 2.0)
-  private val fibonacci_matrix: Seq[Seq[BigInt]] = Seq(Seq(1, 1), Seq(1, 0))
+  private val PHI: BigDecimal                  = BigDecimal((1.0 + math.sqrt(5.0)) / 2.0)
+  private val fibonacci_matrix: Matrix[BigInt] = Matrix(Seq(Seq(1, 1), Seq(1, 0)))
 
   /** Returns approximate F<sub>n</sub> - n-th fibonacci number */
   def approximateFibonacci(n: Int): BigInt = approximateFibonacci(n.toLong)

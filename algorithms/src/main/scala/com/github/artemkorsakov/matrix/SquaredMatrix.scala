@@ -6,21 +6,25 @@ import com.github.artemkorsakov.matrix.GenericOperation._
 class SquaredMatrix[T](elements: Seq[Seq[T]]) extends Matrix[T](elements) {
   require(isSquared)
 
+  private val zero     = zeroT(topLeft)
+  private val one      = oneT(topLeft)
+  private val minusOne = minusOneT(topLeft)
+
   lazy val isSymmetrical: Boolean = this == transpose
 
-  lazy val isSkewSymmetrical: Boolean = this == transpose * minusOneT(topLeft)
+  lazy val isSkewSymmetrical: Boolean = this == transpose * minusOne
 
   lazy val isUpperTriangular: Boolean =
-    (0 until n).forall(i => (0 until n).forall(j => j >= i || elements(i)(j) == zeroT(topLeft)))
+    (0 until n).forall(i => (0 until n).forall(j => j >= i || elements(i)(j) == zero))
 
   lazy val isLowerTriangular: Boolean =
-    (0 until n).forall(i => (0 until n).forall(j => i >= j || elements(i)(j) == zeroT(topLeft)))
+    (0 until n).forall(i => (0 until n).forall(j => i >= j || elements(i)(j) == zero))
 
   lazy val isHessenbergMatrix: Boolean =
-    (0 until n).forall(i => (0 until n).forall(j => j + 1 >= i || elements(i)(j) == zeroT(topLeft)))
+    (0 until n).forall(i => (0 until n).forall(j => j + 1 >= i || elements(i)(j) == zero))
 
   lazy val isIdentityMatrix: Boolean =
-    (0 until n).forall(i => (0 until n).forall(j => elements(i)(j) == (if (i == j) oneT(topLeft) else zeroT(topLeft))))
+    (0 until n).forall(i => (0 until n).forall(j => elements(i)(j) == (if (i == j) one else zero)))
 
   lazy val isOrthogonalMatrix: Boolean =
     (this * this.transpose).toSquaredMatrix.isIdentityMatrix
@@ -30,13 +34,16 @@ class SquaredMatrix[T](elements: Seq[Seq[T]]) extends Matrix[T](elements) {
     if (elements.length == 1) {
       topLeft
     } else {
-      (0 until n).foldLeft(zeroT(topLeft)) { (sum, i) =>
-        val mul = mulT(elements.head(i), SquaredMatrix(elements).minor(0, i).toSquaredMatrix.determinant)
+      (0 until n).foldLeft(zero) { (sum, i) =>
+        val el = elements.head(i)
+        val mul =
+          if (el == zero) zero
+          else mulT(el, SquaredMatrix(elements).minor(0, i).toSquaredMatrix.determinant)
         if (i % 2 == 0) addT(sum, mul) else subT(sum, mul)
       }
     }
 
-  lazy val trace: T = mainDiagonal.foldLeft(zeroT(topLeft))(addT)
+  lazy val trace: T = mainDiagonal.foldLeft(zero)(addT)
 }
 
 object SquaredMatrix {

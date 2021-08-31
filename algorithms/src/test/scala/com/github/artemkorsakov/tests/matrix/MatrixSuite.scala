@@ -1,5 +1,6 @@
 package com.github.artemkorsakov.tests.matrix
 
+import com.github.artemkorsakov.combinatorics.BinomialCoefficient
 import com.github.artemkorsakov.matrix.{ Matrix, MatrixLine }
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers._
@@ -165,5 +166,32 @@ class MatrixSuite extends AnyFunSuiteLike {
   test("vectorization") {
     val matrix1 = Matrix(Seq(Seq(2, 0), Seq(-1, 3), Seq(7, 5)))
     matrix1.vectorization shouldBe Seq(2, -1, 7, 0, 3, 5)
+  }
+
+  test("temp") {
+    val matrix1 = Matrix(
+      Seq(
+        Seq(7.092008, 1.520956, -6.070302, 1.096794, -0.258725, -1.660403),
+        Seq(-1.460788, 10.571190, -4.693972, 2.814325, -1.155592, -1.063419),
+        Seq(-18.138541, -6.909565, 13.714904, 1.210545, -0.480109, -0.854356),
+        Seq(-4.492700, 16.490825, -7.213005, 8.123659, -10.751384, -6.874565),
+        Seq(49.140549, -14.544212, -13.464582, 11.926462, -17.276158, -11.362853),
+        Seq(-18.045186, -1.026707, 7.898942, -6.571987, 11.638924, 8.046905),
+        Seq(-12.194496, 15.435181, -5.020870, 3.139826, -7.063257, -4.700764)
+      )
+    )
+    val aat = (matrix1 * matrix1.transpose).toSquaredMatrix
+    println(aat)
+    println(aat.isSymmetrical)
+    println(aat.determinant)
+    println(aat.trace)
+  }
+
+  test("temp2") {
+    val a = BinomialCoefficient.binomialCoefficient(6, 4)
+    println(a)
+    val b = BinomialCoefficient.binomialCoefficient(43, 2)
+    println(b)
+    println(a * b)
   }
 }

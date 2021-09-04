@@ -6,6 +6,14 @@ import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers._
 
 class MatrixSuite extends AnyFunSuiteLike {
+  test("rows, columns, diagonals") {
+    val matrix = Matrix(Seq(Seq(1, 2), Seq(3, 4), Seq(5, 6)))
+    matrix.rows should contain theSameElementsAs Seq(Seq(1, 2), Seq(3, 4), Seq(5, 6))
+    matrix.columns should contain theSameElementsAs Seq(Seq(1, 3, 5), Seq(2, 4, 6))
+    matrix.diagonals should contain theSameElementsAs Seq(Seq(1, 4), Seq(2), Seq(3, 6), Seq(5))
+    matrix.oppDiagonals should contain theSameElementsAs Seq(Seq(1), Seq(2, 3), Seq(4, 5), Seq(6))
+  }
+
   test("mainDiagonal") {
     Matrix(Seq(Seq(1, 2))).mainDiagonal shouldBe Seq(1)
     Matrix(Seq(Seq(1, 2), Seq(3, 4))).mainDiagonal shouldBe Seq(1, 4)

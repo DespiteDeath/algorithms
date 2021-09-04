@@ -21,6 +21,16 @@ class Matrix[T](val elements: Seq[Seq[T]]) {
 
   def column(j: Int): Seq[T] = (0 until m).map(i => elements(i)(j))
 
+  lazy val rows: Seq[Seq[T]] = elements
+
+  lazy val columns: Seq[Seq[T]] = (0 until n).map(j => (0 until m).map(i => elements(i)(j)))
+
+  lazy val diagonals: Seq[Seq[T]] = (0 until n).map(j => (0 until (n - j)).map(i => elements(i)(j + i))) ++
+    (1 until m).map(i => (0 until (m - i)).map(j => elements(i + j)(j)))
+
+  lazy val oppDiagonals: Seq[Seq[T]] = (0 until n).map(j => (0 to j).map(i => elements(i)(j - i))) ++
+    (1 until m).map(i => ((n - 1) to (i + n - m) by -1).map(j => elements(i + n - 1 - j)(j)))
+
   lazy val mainDiagonal: Seq[T] = (0 until math.min(n, m)).map(i => elements(i)(i))
 
   lazy val isSquared: Boolean = m == n

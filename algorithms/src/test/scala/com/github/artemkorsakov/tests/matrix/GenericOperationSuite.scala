@@ -55,4 +55,10 @@ class GenericOperationSuite extends AnyFunSuiteLike {
     GenericOperation.modT(BigDecimal(1.1), BigDecimal(1.1)) shouldBe BigDecimal(0.0)
   }
 
+  test("sqrtT") {
+    GenericOperation.sqrtT(16) shouldBe 4.0
+    GenericOperation.sqrtT(16L) shouldBe 4.0
+    GenericOperation.sqrtT(16.0) shouldBe 4.0
+  }
+
 }

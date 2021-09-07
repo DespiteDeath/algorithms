@@ -66,7 +66,7 @@ class Matrix[T](val elements: Seq[Seq[T]]) {
   def *(other: Matrix[T]): Matrix[T] = {
     require(n == other.m)
     val newElements = (0 until m)
-      .map(i => (0 until other.n).map(j => MatrixLine(elements(i)).*((0 until n).map(k => other.elements(k)(j)))))
+      .map(i => (0 until other.n).map(j => Vector(elements(i)).*((0 until n).map(k => other.elements(k)(j)))))
     Matrix(newElements)
   }
 
@@ -74,16 +74,16 @@ class Matrix[T](val elements: Seq[Seq[T]]) {
     require(n == other.m)
     val newElements = (0 until m)
       .map(i =>
-        (0 until other.n).map(j => MatrixLine(elements(i)).*((0 until n).map(k => other.elements(k)(j)), module))
+        (0 until other.n).map(j => Vector(elements(i)).*((0 until n).map(k => other.elements(k)(j)), module))
       )
     Matrix(newElements)
   }
 
-  def *(other: MatrixLine[T]): MatrixLine[T] =
-    MatrixLine(*(other.columnToMatrix).elements.map(_.head))
+  def *(other: Vector[T]): Vector[T] =
+    Vector(*(other.columnToMatrix).elements.map(_.head))
 
-  def *(other: MatrixLine[T], module: T): MatrixLine[T] =
-    MatrixLine(*(other.columnToMatrix, module).elements.map(_.head))
+  def *(other: Vector[T], module: T): Vector[T] =
+    Vector(*(other.columnToMatrix, module).elements.map(_.head))
 
   /** Matrix exponentiation. */
   def power(p: Long): Matrix[T] = {

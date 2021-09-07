@@ -1,11 +1,34 @@
 package com.github.artemkorsakov.tests.matrix
 
 import com.github.artemkorsakov.matrix.Matrix
-import com.github.artemkorsakov.matrix.MatrixLine._
+import com.github.artemkorsakov.matrix.Vector._
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers._
 
-class MatrixLineSuite extends AnyFunSuiteLike {
+class VectorSuite extends AnyFunSuiteLike {
+  test("norm") {
+    Seq(1, 2, -3, 1, 1).norm shouldBe 4
+
+    println(Seq(1, 5, 4).norm)
+    println(Seq(7,8,9).cos(Seq(6,3,5)))
+    // (7,8,9),b=(6,3,5)
+  }
+
+  test("add") {
+    Seq(1, 2, -3) + Seq(-7, 4, 6) shouldBe Seq(-6, 6, 3)
+    Seq(1L, 2L, -3L) + Seq(-7L, 4L, 6L) shouldBe Seq(-6L, 6L, 3L)
+    Seq(1.5, 2, -3) + Seq(-7, 4, 6.2) shouldBe Seq(-5.5, 6.0, 3.2)
+    Seq(BigInt(156744), BigInt(53453535), BigInt(-656464646)) + Seq(
+      BigInt(-4324344),
+      BigInt(455455455),
+      BigInt(445354354)
+    ) shouldBe Seq(BigInt(-4167600), BigInt(508908990), BigInt(-211110292))
+  }
+
+  test("mul number") {
+    Seq(1, 2, -3).*(5) shouldBe Seq(5, 10, -15)
+  }
+
   test("mul") {
     Seq(1, 2, -3).*(Seq(-7, 4, 6)) shouldBe -17
     Seq(1, 2, -3) * Seq(-7, 4, 6) shouldBe -17
@@ -41,5 +64,22 @@ class MatrixLineSuite extends AnyFunSuiteLike {
     matrixA.*(matrixB) shouldBe matrixC
     matrixA * matrixB shouldBe matrixC
     matrixA.*(matrixB, 7) shouldBe Seq(2, 5, 4, 6)
+  }
+
+  test("distance") {
+    Seq(1, 2, -3).distance(Seq(-1, 5, -2)) shouldBe 3.7416573867739413
+  }
+
+  test("cos") {
+    Seq(1, 2, -3).cos(Seq(-1, 5, -2)) shouldBe 0.7319250547113999
+  }
+
+  test("isOrthogonal") {
+    Seq(1, 2, -3).isOrthogonal(Seq(-16, 5, -2)) shouldBe true
+    Seq(1, 2, -3).isOrthogonal(Seq(-15, 5, -2)) shouldBe false
+  }
+
+  test("manhattanMetric") {
+    Seq(1, 2, -3).manhattanMetric(Seq(-1, 5, -2)) shouldBe 6
   }
 }

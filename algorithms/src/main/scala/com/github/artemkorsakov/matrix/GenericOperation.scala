@@ -25,13 +25,22 @@ object GenericOperation {
   }
 
   def minusOneT[T](t1: T): T = t1 match {
-    case _: Int            => (-1).asInstanceOf[T]
-    case _: Long           => (-1L).asInstanceOf[T]
-    case _: Double         => (-1.0).asInstanceOf[T]
+    case _: Int            => -1.asInstanceOf[T]
+    case _: Long           => -1L.asInstanceOf[T]
+    case _: Double         => -1.0.asInstanceOf[T]
     case _: BigInt         => BigInt(-1).asInstanceOf[T]
     case _: BigDecimal     => BigDecimal(-1.0).asInstanceOf[T]
     case _: RationalNumber => RationalNumber(-1, 1).asInstanceOf[T]
     case _                 => Default.value[T]
+  }
+
+  def absT[T](t1: T): T = t1 match {
+    case v1: Int        => math.abs(v1).asInstanceOf[T]
+    case v1: Long       => math.abs(v1).asInstanceOf[T]
+    case v1: Double     => math.abs(v1).asInstanceOf[T]
+    case v1: BigInt     => v1.abs.asInstanceOf[T]
+    case v1: BigDecimal => v1.abs.asInstanceOf[T]
+    case _              => Default.value[T]
   }
 
   def addT[T](t1: T, t2: T): T = (t1, t2) match {
@@ -72,6 +81,16 @@ object GenericOperation {
     case (v1: BigDecimal, v2: BigDecimal)         => (((v1 % v2) + v2) % v2).asInstanceOf[T]
     case (v1: RationalNumber, v2: RationalNumber) => (((v1 % v2) + v2) % v2).asInstanceOf[T]
     case _                                        => Default.value[T]
+  }
+
+  def sqrtT[T](t1: T): Double = t1 match {
+    case v1: Int           => math.sqrt(v1.toDouble)
+    case v1: Long          => math.sqrt(v1.toDouble)
+    case v1: Double        => math.sqrt(v1)
+    case _: BigInt         => ???
+    case _: BigDecimal     => ???
+    case _: RationalNumber => ???
+    case _                 => 0.0
   }
 
 }

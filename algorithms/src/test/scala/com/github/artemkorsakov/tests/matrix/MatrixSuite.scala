@@ -1,7 +1,7 @@
 package com.github.artemkorsakov.tests.matrix
 
 import com.github.artemkorsakov.combinatorics.BinomialCoefficient
-import com.github.artemkorsakov.matrix.{ Matrix, MatrixLine }
+import com.github.artemkorsakov.matrix.{ Matrix, Vector }
 import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.should.Matchers._
 
@@ -146,9 +146,9 @@ class MatrixSuite extends AnyFunSuiteLike {
 
   test("matrix multiplication by row") {
     val matrixA = Matrix(Seq(Seq(3, 4, 2, 5), Seq(0, -1, 3, 2), Seq(1, 2, 3, 0)))
-    val matrixB = MatrixLine(Seq(1, -3, 6, 1))
-    matrixA * matrixB shouldBe MatrixLine(Seq(8, 23, 13))
-    matrixA.*(matrixB, 7) shouldBe MatrixLine(Seq(1, 2, 6))
+    val matrixB = Vector(Seq(1, -3, 6, 1))
+    matrixA * matrixB shouldBe Vector(Seq(8, 23, 13))
+    matrixA.*(matrixB, 7) shouldBe Vector(Seq(1, 2, 6))
   }
 
   test("power") {

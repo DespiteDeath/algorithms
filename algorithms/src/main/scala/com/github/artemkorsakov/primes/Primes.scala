@@ -1,5 +1,7 @@
 package com.github.artemkorsakov.primes
 
+import com.github.artemkorsakov.divisors.Divisors.gcd
+
 import scala.collection.mutable
 
 object Primes {
@@ -80,6 +82,14 @@ object Primes {
     }
 
     map
+  }
+
+  def baseWithPower(a: Long): (Long, Long) = {
+    val pp          = primeFactorsWithPow(a)
+    val commonPower = gcd(pp.values.toSeq)
+    val base =
+      pp.foldLeft(1L)((mul, keyVal) => mul * math.pow(keyVal._1.toDouble, keyVal._2.toDouble / commonPower).toLong)
+    (base, commonPower)
   }
 
   /** Goldbach's conjecture.

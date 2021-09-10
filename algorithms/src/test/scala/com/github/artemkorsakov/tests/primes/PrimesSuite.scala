@@ -80,6 +80,11 @@ class PrimesSuite extends AnyFunSuiteLike {
     primeFactorsWithPow(777111) shouldBe Map(3 -> 1, 37 -> 1, 7001 -> 1)
   }
 
+  test("baseWithPower") {
+    baseWithPower(64) shouldBe ((2, 6))
+    baseWithPower(1728) shouldBe ((12, 3))
+  }
+
   test("primeFactors") {
     primeFactors(1000) shouldBe Set(2, 5)
     primeFactors(1024) shouldBe Set(2)

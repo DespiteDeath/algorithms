@@ -2,7 +2,6 @@ package com.github.artemkorsakov.divisors
 
 import com.github.artemkorsakov.primes.Primes._
 
-import scala.collection.LinearSeq
 import scala.math.{ abs, BigInt }
 
 object Divisors {
@@ -30,14 +29,11 @@ object Divisors {
   def countOfDivisors(number: Long): Long =
     primeFactorsWithPow(number).values.foldLeft(1L)((mul, a) => mul * (a + 1))
 
-  def gcd(linearSeq: LinearSeq[Long]): Long =
-    linearSeq.headOption match {
-      case Some(head) =>
-        linearSeq.tail match {
-          case Nil  => head
-          case tail => gcd(head, gcd(tail))
-        }
-      case None => 1
+  def gcd(seq: Seq[Long]): Long =
+    seq match {
+      case Nil          => 1
+      case Seq(head)    => head
+      case head +: tail => gcd(head, gcd(tail))
     }
 
   /** Return the greatest common divisor.

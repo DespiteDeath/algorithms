@@ -8,10 +8,6 @@ import org.scalatest.matchers.should.Matchers._
 class VectorSuite extends AnyFunSuiteLike {
   test("norm") {
     Seq(1, 2, -3, 1, 1).norm shouldBe 4
-
-    println(Seq(1, 5, 4).norm)
-    println(Seq(7,8,9).cos(Seq(6,3,5)))
-    // (7,8,9),b=(6,3,5)
   }
 
   test("add") {

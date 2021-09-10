@@ -15,6 +15,17 @@ class InvertibleMatrix(elements: Seq[Seq[RationalNumber]]) extends SquaredMatrix
         }
       )
     )
+
+  def solveEquation(xs: Seq[RationalNumber]): Seq[RationalNumber] = {
+    require(xs.length == n)
+    xs.indices.map { k =>
+      val matrix = xs.indices.map { i =>
+        (elements(i).take(k) :+ xs(i)) ++ elements(i).drop(k + 1)
+      }
+      InvertibleMatrix(matrix).determinant / det
+    }
+  }
+
 }
 
 object InvertibleMatrix {

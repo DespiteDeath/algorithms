@@ -33,31 +33,34 @@ object PythagoreanTriplet {
   /** Return all Pythagorean triplets such as a+b+c = sum.
     * @see <a href="https://projecteuler.net/overview=009">detailed description</a>
     */
-  def pythagoreanTripletsWithGivenSum(sum: Long): Seq[PythagoreanTriplet] = {
-    val arrayBuffer = mutable.ArrayBuffer.empty[PythagoreanTriplet]
-    val s2          = sum / 2
-    val sqrt        = math.sqrt(s2.toDouble).toLong
-    val mLimit      = if (sqrt * sqrt == s2) sqrt - 1 else sqrt
+  def pythagoreanTripletsWithGivenSum(sum: Long): Seq[PythagoreanTriplet] =
+    if (sum % 2 == 1) {
+      Seq.empty[PythagoreanTriplet]
+    } else {
+      val arrayBuffer = mutable.ArrayBuffer.empty[PythagoreanTriplet]
+      val s2          = sum / 2
+      val sqrt        = math.sqrt(s2.toDouble).toLong
+      val mLimit      = if (sqrt * sqrt == s2) sqrt - 1 else sqrt
 
-    for (m <- 2L to mLimit)
-      if (s2 % m == 0) {
-        var sm = s2 / m
-        while (sm % 2 == 0) // reduce the search space by
-          sm /= 2 // removing all factors 2
-        var k = if (m % 2 == 1) m + 2 else m + 1
-        while (k < 2 * m && k <= sm) {
-          if (sm % k == 0 && gcd(k, m) == 1) {
-            val d = s2 / (k * m)
-            val n = k - m
-            val a = d * (m * m - n * n)
-            val b = 2 * d * m * n
-            val c = d * (m * m + n * n)
-            arrayBuffer += PythagoreanTriplet(a, b, c)
+      for (m <- 2L to mLimit)
+        if (s2 % m == 0) {
+          var sm = s2 / m
+          while (sm % 2 == 0) // reduce the search space by
+            sm /= 2 // removing all factors 2
+          var k = if (m % 2 == 1) m + 2 else m + 1
+          while (k < 2 * m && k <= sm) {
+            if (sm % k == 0 && gcd(k, m) == 1) {
+              val d = s2 / (k * m)
+              val n = k - m
+              val a = d * (m * m - n * n)
+              val b = 2 * d * m * n
+              val c = d * (m * m + n * n)
+              arrayBuffer += PythagoreanTriplet(a, b, c)
+            }
+            k += 2
           }
-          k += 2
         }
-      }
 
-    arrayBuffer.toSeq
-  }
+      arrayBuffer.toSeq
+    }
 }

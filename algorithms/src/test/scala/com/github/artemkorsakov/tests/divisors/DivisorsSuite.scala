@@ -20,10 +20,12 @@ class DivisorsSuite extends AnyFunSuiteLike {
   test("gcdex") {
     gcdex(15, 10) shouldBe ((5, 1, -1))
     gcdex(12121212L, 23422344L) shouldBe ((12, 347845, -180012))
+    gcdex(BigInt(12121212L), BigInt(23422344L)) shouldBe ((BigInt(12), BigInt(347845), BigInt(-180012)))
   }
 
   test("gcdInverse") {
     gcdInverse(111, 10) shouldBe 1
+    gcdInverse(BigInt(111), BigInt(10)) shouldBe BigInt(1)
   }
 
   test("divisors") {

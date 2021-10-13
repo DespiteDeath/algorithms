@@ -8,5 +8,6 @@ class ChineseRemainderTheoremSuite extends AnyFunSuiteLike {
   test("solution") {
     solution(Array(2, 3), Array(1, 2)) shouldBe 5
     solution(Array(707, 527), Array(0, 5)) shouldBe 258762
+    solution(Array(1504170715041707L, 4503599627370517L), Array(0L, 8912517754604L)) shouldBe 1504170715041707L * 3
   }
 }

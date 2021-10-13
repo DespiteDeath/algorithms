@@ -90,6 +90,18 @@ object Divisors {
       (temp._1, temp._3 - (b / a) * temp._2, temp._2)
     }
 
+  /** Extended Euclidean algorithm.
+    *
+    * @see <a href="https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm">detailed description</a>
+    */
+  def gcdex(a: BigInt, b: BigInt): (BigInt, BigInt, BigInt) =
+    if (a == 0) {
+      (b, BigInt(0), BigInt(1))
+    } else {
+      val temp = gcdex(b % a, a)
+      (temp._1, temp._3 - (b / a) * temp._2, temp._2)
+    }
+
   /** Modular multiplicative inverse.
     *
     * @see <a href="https://en.wikipedia.org/wiki/Modular_multiplicative_inverse">detailed description</a>
@@ -103,4 +115,16 @@ object Divisors {
     }
   }
 
+  /** Modular multiplicative inverse.
+    *
+    * @see <a href="https://en.wikipedia.org/wiki/Modular_multiplicative_inverse">detailed description</a>
+    */
+  def gcdInverse(a: BigInt, m: BigInt): BigInt = {
+    val extraEuclid = gcdex(a, m)
+    if (extraEuclid._1 == 1) {
+      (extraEuclid._2 % m + m) % m
+    } else {
+      -1
+    }
+  }
 }
